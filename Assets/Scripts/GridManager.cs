@@ -63,8 +63,8 @@ public class GridManager : MonoBehaviour
                 cellObject.name = $"Cell_{x}_{y}";
 
                 // Randomly assign a cell type
-                CellType cellType = GetRandomCellType();
-                Material cellMaterial = GetMaterialForCellType(cellType);
+                CellType cellType = CellType.Grass;
+                Material cellMaterial = grassMaterial;
 
                 // Initialize the CellData script on the prefab
                 CellData cell = cellObject.GetComponent<CellData>();
