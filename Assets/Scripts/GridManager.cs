@@ -8,13 +8,14 @@ public class GridManager : MonoBehaviour
     [Header("Grid Settings")]
     public int gridWidth;
     public int gridHeight;
-    public float cellSize = 5f;
+    public float RegionSize = 5f;
 
     [Header("Prefabs and Materials")]
-    public GameObject cellPrefab;
+    public GameObject RegionPrefab;
     public Material grassMaterial;
     public Material dirtMaterial;
     public Material stoneMaterial;
+    public Material forestMaterial;
 
     [Header("Gameplay Prefabs")]
     public GameObject housePrefab;
@@ -22,16 +23,21 @@ public class GridManager : MonoBehaviour
     public GameObject treePrefab;
     public GameObject survivorPrefab;
 
-    [Header("Spawn Settings")]
-    public int dirtCellCount = 10;
-    public int stoneCellCount = 5;
-    public int farmCellCount = 3;
-    public int treeCount = 5;
+    [Header("Spawn Region Settings")]
+    public int dirtRegionCount = 10;
+    public int stoneRegionCount = 5;
+    public int farmRegionCount = 3;
+    public int forestRegionCount = 5;
 
-    private CellData[,] grid;
-    private List<Vector2Int> dirtCells = new List<Vector2Int>();
-    private List<Vector2Int> stoneCells = new List<Vector2Int>();
-    private List<Vector2Int> grassCells = new List<Vector2Int>();
+    [Header("Forest Region Settings")]
+    public int minTreesPerForest = 3;
+    public int maxTreesPerForest = 8;
+
+    private RegionData[,] grid;
+    private List<Vector2Int> dirtRegions = new List<Vector2Int>();
+    private List<Vector2Int> stoneRegions = new List<Vector2Int>();
+    private List<Vector2Int> grassRegions = new List<Vector2Int>();
+    private List<Vector2Int> forestRegions = new List<Vector2Int>();
 
     private void Awake()
     {
@@ -47,61 +53,62 @@ public class GridManager : MonoBehaviour
         PlaceRandomDirtAndStone();
         PlaceHouseOnStone();
         PlaceFarmsOnDirt();
-        PlantTreesOnGrass();
+        ConvertGrassToForest();
+        SpawnTreesInForestRegions();
     }
 
     private void GenerateBaseLayer()
     {
-        grid = new CellData[gridWidth, gridHeight];
+        grid = new RegionData[gridWidth, gridHeight];
 
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                Vector3 worldPosition = new Vector3(x * cellSize, 0, y * cellSize);
-                GameObject cellObject = Instantiate(cellPrefab, worldPosition, Quaternion.identity, transform);
+                Vector3 worldPosition = new Vector3(x * RegionSize, 0, y * RegionSize);
+                GameObject cellObject = Instantiate(RegionPrefab, worldPosition, Quaternion.identity, transform);
 
-                CellData cell = cellObject.GetComponent<CellData>();
-                cell.Initialize(new Vector2Int(x, y), CellType.Grass, grassMaterial);
+                RegionData cell = cellObject.GetComponent<RegionData>();
+                cell.Initialize(new Vector2Int(x, y), RegionType.Grass, grassMaterial);
                 grid[x, y] = cell;
 
-                grassCells.Add(new Vector2Int(x, y));
+                grassRegions.Add(new Vector2Int(x, y));
             }
         }
     }
 
     private void PlaceRandomDirtAndStone()
     {
-        for (int i = 0; i < dirtCellCount; i++)
-            AssignRandomCell(CellType.Dirt, dirtCells);
+        for (int i = 0; i < dirtRegionCount; i++)
+            AssignRandomCell(RegionType.Dirt, dirtRegions);
 
-        for (int i = 0; i < stoneCellCount; i++)
-            AssignRandomCell(CellType.Stone, stoneCells);
+        for (int i = 0; i < stoneRegionCount; i++)
+            AssignRandomCell(RegionType.Stone, stoneRegions);
     }
 
-    private void AssignRandomCell(CellType type, List<Vector2Int> targetList)
+    private void AssignRandomCell(RegionType type, List<Vector2Int> targetList)
     {
-        List<Vector2Int> availableCells = new List<Vector2Int>(grassCells);
-        if (type == CellType.Dirt)
-            availableCells.RemoveAll(pos => dirtCells.Contains(pos));
-        if (type == CellType.Stone)
-            availableCells.RemoveAll(pos => stoneCells.Contains(pos));
+        List<Vector2Int> availableCells = new List<Vector2Int>(grassRegions);
+        if (type == RegionType.Dirt)
+            availableCells.RemoveAll(pos => dirtRegions.Contains(pos));
+        if (type == RegionType.Stone)
+            availableCells.RemoveAll(pos => stoneRegions.Contains(pos));
 
         if (availableCells.Count > 0)
         {
             Vector2Int chosenPos = availableCells[Random.Range(0, availableCells.Count)];
-            grid[chosenPos.x, chosenPos.y].SetCellType(type, GetMaterialForCellType(type));
+            grid[chosenPos.x, chosenPos.y].SetRegionType(type, GetMaterialForCellType(type));
 
             targetList.Add(chosenPos);
-            grassCells.Remove(chosenPos);
+            grassRegions.Remove(chosenPos);
         }
     }
 
     private void PlaceHouseOnStone()
     {
-        if (stoneCells.Count > 0)
+        if (stoneRegions.Count > 0)
         {
-            Vector2Int housePosition = stoneCells[Random.Range(0, stoneCells.Count)];
+            Vector2Int housePosition = stoneRegions[Random.Range(0, stoneRegions.Count)];
             Instantiate(housePrefab, GetCenterGridPosition(housePosition) + new Vector3(0, GetPrefabHeight(housePrefab) / 2, 0), Quaternion.identity);
 
             SpawnSurvivorsAroundHouse(housePosition);
@@ -110,24 +117,31 @@ public class GridManager : MonoBehaviour
 
     private void PlaceFarmsOnDirt()
     {
-        for (int i = 0; i < farmCellCount && dirtCells.Count > 0; i++)
+        for (int i = 0; i < farmRegionCount && dirtRegions.Count > 0; i++)
         {
             
-            Vector2Int farmPosition = dirtCells[Random.Range(0, dirtCells.Count)];
+            Vector2Int farmPosition = dirtRegions[Random.Range(0, dirtRegions.Count)];
             Instantiate(farmPlotPrefab, GetCenterGridPosition(farmPosition) + new Vector3(0, GetPrefabHeight(farmPlotPrefab) / 2, 0), Quaternion.identity);
-            dirtCells.Remove(farmPosition);
+            dirtRegions.Remove(farmPosition);
         }
     }
 
-    private void PlantTreesOnGrass()
+    private void ConvertGrassToForest()
     {
-        for (int i = 0; i < treeCount && grassCells.Count > 0; i++)
+        for (int i = 0; i < forestRegionCount && grassRegions.Count > 0; i++)
         {
-            Vector2Int treePosition = grassCells[Random.Range(0, grassCells.Count)];
-            Instantiate(treePrefab, GetCenterGridPosition(treePosition) + new Vector3(0, GetPrefabHeight(treePrefab)/2, 0), Quaternion.identity);
-            grassCells.Remove(treePosition);
+            // Randomly select a grass region
+            Vector2Int forestPosition = grassRegions[Random.Range(0, grassRegions.Count)];
+
+            // Update the region type and apply the forest material
+            grid[forestPosition.x, forestPosition.y].SetRegionType(RegionType.Forest, forestMaterial);
+
+            // Update region lists
+            forestRegions.Add(forestPosition);
+            grassRegions.Remove(forestPosition);
         }
     }
+
 
     private void SpawnSurvivorsAroundHouse(Vector2Int houseCenter)
     {
@@ -135,7 +149,7 @@ public class GridManager : MonoBehaviour
         Vector3 houseWorldPosition = GetCenterGridPosition(houseCenter);
 
         //Offset positions: move 1.5 cells away (house boundary + half a cell)
-        float edgeOffset = cellSize / 2 - .5f;
+        float edgeOffset = RegionSize / 2 - .5f;
 
         Vector3 leftCenter = houseWorldPosition + new Vector3(-edgeOffset, 0, 0);
         Vector3 rightCenter = houseWorldPosition + new Vector3(edgeOffset, 0, 0);
@@ -144,9 +158,40 @@ public class GridManager : MonoBehaviour
         Instantiate(survivorPrefab, rightCenter + new Vector3(0, GetPrefabHeight(survivorPrefab) / 2, 0), Quaternion.identity);
     }
 
+    private void SpawnTreesInForestRegions()
+    {
+        foreach (Vector2Int forestPosition in forestRegions)
+        {
+            // Access the forest region
+            RegionData forestRegion = grid[forestPosition.x, forestPosition.y];
+
+            if (forestRegion == null || forestRegion.GridNodes.Count == 0) continue;
+
+            // Determine the number of trees for this forest region
+            int treesToSpawn = Random.Range(minTreesPerForest, maxTreesPerForest + 1);
+
+            // Randomly spawn trees in available GridNodes
+            List<Transform> availableNodes = new List<Transform>(forestRegion.GridNodes);
+
+            for (int i = 0; i < treesToSpawn && availableNodes.Count > 0; i++)
+            {
+                // Choose a random GridNode
+                int randomIndex = Random.Range(0, availableNodes.Count);
+                Transform chosenNode = availableNodes[randomIndex];
+
+                // Spawn treePrefab at the node's position
+                Instantiate(treePrefab, chosenNode.position, Quaternion.identity);
+
+                // Remove the node to avoid spawning multiple trees at the same spot
+                availableNodes.RemoveAt(randomIndex);
+            }
+        }
+    }
+
+
     private Vector3 GetCenterGridPosition(Vector2Int gridPosition)
     {
-        return new Vector3(gridPosition.x * cellSize + cellSize / 2f, 0, gridPosition.y * cellSize + cellSize / 2f);
+        return new Vector3(gridPosition.x * RegionSize + RegionSize / 2f, 0, gridPosition.y * RegionSize + RegionSize / 2f);
     }
 
     private float GetPrefabHeight(GameObject prefab)
@@ -154,13 +199,13 @@ public class GridManager : MonoBehaviour
         return prefab.GetComponentInChildren<Renderer>().bounds.size.y;
     }
 
-    public Material GetMaterialForCellType(CellType cellType)
+    public Material GetMaterialForCellType(RegionType cellType)
     {
         switch (cellType)
         {
-            case CellType.Grass: return grassMaterial;
-            case CellType.Dirt: return dirtMaterial;
-            case CellType.Stone: return stoneMaterial;
+            case RegionType.Grass: return grassMaterial;
+            case RegionType.Dirt: return dirtMaterial;
+            case RegionType.Stone: return stoneMaterial;
             default: return grassMaterial;
         }
     }
