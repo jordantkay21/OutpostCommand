@@ -14,7 +14,6 @@ public class CellData : MonoBehaviour
     [Header("Cell Properties")]
     public Vector2Int GridPosition;
     public CellType CellType;
-    public bool IsOccupied = false;
 
     private Renderer cellRenderer;
 
@@ -45,24 +44,6 @@ public class CellData : MonoBehaviour
         UpdateMaterial();
     }
 
-    private void OnMouseDown()
-    {
-        //Cycle through CellType
-        CellType nextType = GetNextCellType(CellType);
-
-        //Update the cell type using GridManager
-        if (GridManager.Instance != null)
-        {
-            GridManager.Instance.UpdateCellType(GridPosition, nextType);
-        }
-    }
-    private CellType GetNextCellType(CellType currentType)
-    {
-        // Get the next CellType in the enum, looping back to the start if at the end
-        int nextTypeIndex = ((int)currentType + 1) % System.Enum.GetValues(typeof(CellType)).Length;
-        return (CellType)nextTypeIndex;
-    }
-
     private void UpdateMaterial()
     {
         if (cellRenderer != null)
@@ -88,11 +69,4 @@ public class CellData : MonoBehaviour
             cellRenderer.material = newMaterial;
         }
     }
-
-    public void SetOccupied(bool occupied)
-    {
-        IsOccupied = occupied;
-    }
-
-
 }
