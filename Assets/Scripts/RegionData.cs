@@ -12,34 +12,36 @@ public enum RegionType
 
 public class RegionData : MonoBehaviour
 {
-    [Header("Cell Properties")]
+    public List<TileData> Tiles = new List<TileData>();
+    [Header("Region Properties")]
     public Vector2Int GridPosition;
     public RegionType RegionType;
-    public List<Transform> GridNodes = new List<Transform>();
+    public List<Material> RegionMaterials = new List<Material>();
 
-    private Renderer RegionRenderer;
-
-    public void Initialize(Vector2Int gridPosition, RegionType regionType, Material regionMaterial)
+    public void Initialize(Vector2Int gridPos, RegionType regionType, List<Material> regionMaterials)
     {
-        GridPosition = gridPosition;
-        SetRegionType(regionType, regionMaterial);
+        GridPosition = gridPos;
+        RegionType = regionType;
+        RegionMaterials = regionMaterials;
+
+        SetRegionType(RegionType,RegionMaterials);
     }
 
-    private void Awake()
-    {
-        RegionRenderer = GetComponent<Renderer>();
-        if (RegionRenderer == null)
-        {
-            Debug.LogError("Renderer component not found on cell prefab.");
-        }
-    }
-
-    public void SetRegionType(RegionType newType, Material newMaterial)
+    public void SetRegionType(RegionType newType, List<Material> newMaterials)
     {
         RegionType = newType;
-        if (RegionRenderer != null && newMaterial != null)
+
+        foreach (var tile in Tiles)
         {
-            RegionRenderer.material = newMaterial;
+            tile.SetMaterial(GetRandomMaterial(newMaterials));
         }
     }
+
+    #region Helper Methods
+    public Material GetRandomMaterial(List<Material> materials)
+    {
+        return materials[Random.Range(0, materials.Count)];
+    }
+    #endregion
+
 }
