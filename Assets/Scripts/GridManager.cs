@@ -180,7 +180,7 @@ public class GridManager : MonoBehaviour
                 Transform chosenNode = availableNodes[randomIndex];
 
                 // Spawn treePrefab at the node's position
-                Instantiate(treePrefab, chosenNode.position, Quaternion.identity);
+                Instantiate(treePrefab, chosenNode.position + new Vector3(0, GetPrefabHeight(treePrefab) / 2, 0), Quaternion.identity);
 
                 // Remove the node to avoid spawning multiple trees at the same spot
                 availableNodes.RemoveAt(randomIndex);
