@@ -12,7 +12,6 @@ public class GridManager : MonoBehaviour
     [Header("Environment Prefabs")]
     public GameObject RegionPrefab;
     public GameObject HousePrefab;
-    public GameObject survivorPrefab;
     public GameObject TreePrefab;
 
     [Header("Environment Materials")]
@@ -93,20 +92,10 @@ public class GridManager : MonoBehaviour
             Debug.LogWarning("HousePrefab is not assigned.");
         }
 
-        SpawnSurvivorsAroundHouse(centerWorldPosition);
+        SurvivorManager.Instance.SpawnSurvivorsAroundHouse(centerWorldPosition, RegionSize);
     }
 
-    private void SpawnSurvivorsAroundHouse(Vector3 houseCenter)
-    {
-        //Offset Positions: move 1.5 cells away (house boundry + half a cell)
-        float edgeOffset = RegionSize / 2 - .5f;
 
-        Vector3 leftCenter = houseCenter + new Vector3(-edgeOffset, 0, 0);
-        Vector3 rightCenter = houseCenter + new Vector3(edgeOffset, 0, 0);
-
-        Instantiate(survivorPrefab, leftCenter + new Vector3(0, GetPrefabHeight(survivorPrefab) / 2, 0), Quaternion.identity);
-        Instantiate(survivorPrefab, rightCenter + new Vector3(0, GetPrefabHeight(survivorPrefab) / 2, 0), Quaternion.identity);
-    }
 
     public void ConvertForestToGrass()
     {

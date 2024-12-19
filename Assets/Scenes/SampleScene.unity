@@ -151,10 +151,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d76d1cd2c427c5e4a9107e44a55867e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  survivorPrefab: {fileID: 447187856498404227, guid: 99719606057e9104cb751e0cee81526d,
+    type: 3}
   survivorLayer:
     serializedVersion: 2
     m_Bits: 8
   JobPanel: {fileID: 2128087939}
+  SurvivorNames:
+  - Bob
+  - Bill
+  - Diane
+  - Rosa
   HighlightMaterial: {fileID: 2100000, guid: 309b9b382d0ec32418bd055889e754b6, type: 2}
   FarmerMaterial: {fileID: 2100000, guid: ddd8aad29f4be2d498bb74173e035002, type: 2}
   LumberJackMaterial: {fileID: 2100000, guid: a3dc80b878707224c891010064f6a1fc, type: 2}
@@ -302,7 +309,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 26.93794
+  field of view: 48.76385
   orthographic: 0
   orthographic size: 12.76304
   m_Depth: -1
@@ -328,8 +335,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.41867977, y: 0.56930614, z: -0.4172328, w: -0.5714146}
-  m_LocalPosition: {x: 20.130787, y: 18.247143, z: 11.922365}
+  m_LocalRotation: {x: -0.52770257, y: 0.0030214782, z: -0.0019407643, w: -0.8494216}
+  m_LocalPosition: {x: 12.31564, y: 21.339958, z: 0.10882759}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -817,7 +824,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 26.93794
+    FieldOfView: 48.76385
     OrthographicSize: 12.76304
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -843,8 +850,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 953904635}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.41867977, y: 0.56930614, z: -0.4172328, w: -0.5714146}
-  m_LocalPosition: {x: 6.1310377, y: 17.747143, z: -0.07663536}
+  m_LocalRotation: {x: -0.52770257, y: 0.0030214782, z: -0.0019407643, w: -0.8494216}
+  m_LocalPosition: {x: -1.6841087, y: 20.839958, z: -11.890173}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -987,8 +994,6 @@ MonoBehaviour:
   RegionPrefab: {fileID: 2376488210039086058, guid: d64e27ae2ad631341b35b45ff6236884,
     type: 3}
   HousePrefab: {fileID: 6655550628553086389, guid: 4a45a4e491730a540bd22a11ed037f02,
-    type: 3}
-  survivorPrefab: {fileID: 447187856498404227, guid: 99719606057e9104cb751e0cee81526d,
     type: 3}
   TreePrefab: {fileID: 651164250227861122, guid: 0eece03024954394c80e6deb24d92ea6,
     type: 3}
