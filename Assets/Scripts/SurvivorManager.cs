@@ -45,12 +45,12 @@ public class SurvivorManager : MonoBehaviour
         // Deselect previous survivor
         if (selectedSurvivor != null)
         {
-            selectedSurvivor.SetMaterial(HighlightMaterial);
+            selectedSurvivor.SetMaterial(selectedSurvivor.originalMaterial);
         }
 
         // Select new survivor
         selectedSurvivor = survivor;
-        selectedSurvivor.SetMaterial(HighlightMaterial);
+        selectedSurvivor.SetMaterial(HighlightMaterial, false);
         JobPanel.SetActive(true);
         Debug.Log($"Selected {survivor.name}");
     }

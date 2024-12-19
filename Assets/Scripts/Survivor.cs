@@ -13,15 +13,11 @@ public class Survivor : MonoBehaviour
 {
     public SurvivorJob CurrentJob = SurvivorJob.None; // Default job
     private Renderer survivorRenderer;
-    private Color originalColor;
+    public Material originalMaterial;
 
     private void Awake()
     {
         survivorRenderer = GetComponent<Renderer>();
-        if (survivorRenderer != null)
-        {
-            originalColor = survivorRenderer.material.color;
-        }
     }
 
     public void AssignJob(SurvivorJob job)
@@ -30,10 +26,12 @@ public class Survivor : MonoBehaviour
         Debug.Log($"{name} assigned as {job}");
     }
 
-    public void SetMaterial(Material newMaterial)
+
+    public void SetMaterial(Material newMaterial, bool cacheMaterial = true)
     {
         if (survivorRenderer != null)
         {
+            if(cacheMaterial) originalMaterial = newMaterial;
             survivorRenderer.material = newMaterial;
         }
     }

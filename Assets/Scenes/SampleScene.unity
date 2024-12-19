@@ -302,7 +302,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 80
+  field of view: 26.93794
   orthographic: 0
   orthographic size: 12.76304
   m_Depth: -1
@@ -756,8 +756,8 @@ MonoBehaviour:
   virtualCamera: {fileID: 953904636}
   cameraHolder: {fileID: 953904637}
   moveSpeed: 10
-  zoomSpeed: 20
-  minZoom: 30
+  zoomSpeed: 0.5
+  minZoom: 10
   maxZoom: 80
   rotationSpeed: 1
   minPitch: 30
@@ -817,7 +817,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 80
+    FieldOfView: 26.93794
     OrthographicSize: 12.76304
     NearClipPlane: 0.3
     FarClipPlane: 1000
