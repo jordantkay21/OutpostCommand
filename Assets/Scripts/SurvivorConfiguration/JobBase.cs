@@ -16,7 +16,8 @@ public class FarmerJob : JobBase
     public override void Assign(Survivor survivor)
     {
         survivor.AssignJob(JobType);
-        Debug.Log($"{survivor.name} is now a Farmer!");
+        Debug.Log($"{survivor.name} is farming. Select a region for {survivor.name} to farm.");
+        RegionSelector.Instance.BeginRegionSelection(survivor, JobType);
     }
 
     public override void PerformJob(Survivor survivor)
@@ -33,7 +34,8 @@ public class LumberjackJob : JobBase
     public override void Assign(Survivor survivor)
     {
         survivor.AssignJob(JobType);
-        Debug.Log($"{survivor.name} is now a Lumberjack!");
+        Debug.Log($"{survivor.name} is now a Lumberjack! Select a region for {survivor.name} to chop wood.");
+        RegionSelector.Instance.BeginRegionSelection(survivor, JobType);
     }
 
     public override void PerformJob(Survivor survivor)

@@ -16,7 +16,27 @@ public class RegionData : MonoBehaviour
     [Header("Region Properties")]
     public Vector2Int GridPosition;
     public RegionType RegionType;
+    public bool IsAssigned = false;
+    public GameObject Border;
+    public Material validMaterial;
+    public Material invalidMaterial;
     public List<Material> RegionMaterials = new List<Material>();
+
+    private Renderer borderRenderer;
+
+    private void Awake()
+    {
+        if (Border != null)
+        {
+            Border.SetActive(false);
+            borderRenderer = Border.GetComponent<Renderer>();
+        }
+        else
+        {
+            Debug.Log($"{name} does not have a Border Assigned");
+        }
+    }
+
 
     public void Initialize(Vector2Int gridPos, RegionType regionType, List<Material> regionMaterials)
     {
@@ -35,6 +55,30 @@ public class RegionData : MonoBehaviour
         {
             tile.SetMaterial(GetRandomMaterial(newMaterials));
         }
+    }
+
+    public void Highlight(bool isHovered, bool isValid = true)
+    {
+        if (Border != null)
+        {
+            Border.SetActive(isHovered);
+            
+            // Loop through all child objects of the border and set their materials
+            foreach (Transform child in Border.transform)
+            {
+                Renderer renderer = child.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.material = isValid ? validMaterial : invalidMaterial;
+                }
+            }
+        }
+    }
+
+    public void AssignToJob(SurvivorJob job)
+    {
+        IsAssigned = true;
+        Debug.Log($"Region {name} has been assigned to {job}.");
     }
 
     #region Helper Methods
