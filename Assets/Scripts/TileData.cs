@@ -23,4 +23,16 @@ public class TileData : MonoBehaviour
         TileMaterial = regionMaterial;
         renderer.material = regionMaterial;
     }
+
+    public void OccupyTile(GameObject prefab)
+    {
+        IsOccupied = true;
+        spawnedPrefab = prefab;
+    }
+
+    public void FreeTile()
+    {
+        IsOccupied = false;
+        spawnedPrefab = null;
+    }
 }
