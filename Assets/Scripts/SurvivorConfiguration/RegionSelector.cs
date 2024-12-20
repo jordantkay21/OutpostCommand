@@ -86,7 +86,7 @@ public class RegionSelector : MonoBehaviour
                         region.AssignToJob(currentJob);
                         Debug.Log($"Region {region.name} assigned to {currentSurvivor.name} as {currentJob}.");
 
-                        currentSurvivor.AssignJob(currentJob);
+                        SurvivorManager.Instance.AssignRegionToSurvivor(currentSurvivor, region);
                         ResetSelection();
                     }
                     else

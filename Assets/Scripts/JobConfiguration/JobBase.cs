@@ -34,13 +34,42 @@ public class LumberjackJob : JobBase
     public override void Assign(Survivor survivor)
     {
         survivor.AssignJob(JobType);
-        Debug.Log($"{survivor.name} is now a Lumberjack! Select a region for {survivor.name} to chop wood.");
+        survivor.JobTask = this;
+        Debug.Log($"{survivor.name} is now a Lumberjack!");
+
         RegionSelector.Instance.BeginRegionSelection(survivor, JobType);
+
     }
+
 
     public override void PerformJob(Survivor survivor)
     {
-        // Lumberjack-specific logic, e.g., chopping trees
-        Debug.Log($"{survivor.name} is chopping wood.");
+        RegionData assignedRegion = SurvivorManager.Instance.GetAssignedRegionForSurvivor(survivor);
+        if (assignedRegion == null)
+        {
+            Debug.LogWarning("No region assigned for lumberjack.");
+            return;
+        }
+
+        List<TaskBase> tasks = new List<TaskBase>();
+
+        foreach (TileData tile in assignedRegion.Tiles)
+        {
+            if (tile.IsOccupied && tile.spawnedPrefab.CompareTag("Tree"))
+            {
+                tasks.Add(new MoveToTileTask(tile));
+                tasks.Add(new ChopTreeTask(tile.spawnedPrefab));
+            }
+        }
+
+        if (tasks.Count > 0)
+        {
+            TaskHandler taskManager = survivor.GetComponent<TaskHandler>();
+            taskManager.AddTasks(tasks);
+        }
+        else
+        {
+            Debug.Log("No trees found in assigned region.");
+        }
     }
 }

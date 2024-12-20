@@ -78,13 +78,33 @@ public class RegionData : MonoBehaviour
     public void AssignToJob(SurvivorJob job)
     {
         IsAssigned = true;
-        Debug.Log($"Region {name} has been assigned to {job}.");
     }
 
     #region Helper Methods
     public Material GetRandomMaterial(List<Material> materials)
     {
         return materials[Random.Range(0, materials.Count)];
+    }
+
+    public TileData GetNearestAvailableTile(Vector3 position)
+    {
+        TileData nearestTile = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var tile in Tiles)
+        {
+            if (!tile.IsOccupied)
+            {
+                float distance = Vector3.Distance(position, tile.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestTile = tile;
+                }
+            }
+        }
+
+        return nearestTile;
     }
     #endregion
 

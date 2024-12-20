@@ -957,7 +957,7 @@ GameObject:
   - component: {fileID: 4548459869057932621}
   - component: {fileID: 5966495538690529287}
   m_Layer: 0
-  m_Name: Proto_Building_House
+  m_Name: Pt_Building_House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

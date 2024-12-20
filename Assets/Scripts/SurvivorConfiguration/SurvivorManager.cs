@@ -19,6 +19,7 @@ public class SurvivorManager : MonoBehaviour
     public Material LumberJackMaterial;
 
     private Dictionary<SurvivorJob, JobBase> jobRegistry = new Dictionary<SurvivorJob, JobBase>();
+    private Dictionary<Survivor, RegionData> survivorRegionMap = new Dictionary<Survivor, RegionData>();
     private Survivor selectedSurvivor;
 
     private void Awake()
@@ -99,6 +100,42 @@ public class SurvivorManager : MonoBehaviour
         Debug.Log($"Selected {survivor.name}");
     }
 
+    public void AssignRegionToSurvivor(Survivor survivor, RegionData region)
+    {
+        if (survivor == null || region == null)
+        {
+            Debug.LogWarning("Survivor or Region is null./ Cannot assign.");
+            return;
+        }
+
+        //Add or update the mapping
+        if (survivorRegionMap.ContainsKey(survivor))
+        {
+            Debug.Log($"{survivor.name} is reassigned to region {region.name}.");
+            survivorRegionMap[survivor] = region;
+        }
+        else
+        {
+            Debug.Log($"{survivor.name} is assigned to region {region.name}.");
+            survivorRegionMap.Add(survivor, region);
+        }
+
+        //Move survivor to a free tile within the assigned region
+        RegionData assignedRegion = GetAssignedRegionForSurvivor(selectedSurvivor);
+        TileData targetTile = assignedRegion?.GetNearestAvailableTile(selectedSurvivor.transform.position);
+
+        if (targetTile != null)
+        {
+            selectedSurvivor.MoveToTile(targetTile, () =>
+            {
+                selectedSurvivor.JobTask.PerformJob(selectedSurvivor);
+            });
+        }
+        else
+        {
+            Debug.LogWarning($"No available tile found in the assigned region");
+        }
+    }
     public void AssignJobToSelectedSurvivor(SurvivorJob jobType)
     {
         if (selectedSurvivor == null)
@@ -109,7 +146,7 @@ public class SurvivorManager : MonoBehaviour
 
         if(jobRegistry.TryGetValue(jobType, out JobBase job))
         {
-            job.Assign(selectedSurvivor);
+            job.Assign(selectedSurvivor); 
         }
         else
         {
@@ -144,6 +181,22 @@ public class SurvivorManager : MonoBehaviour
         SurvivorNames.RemoveAt(randomIndex);
 
         return name;
-        
+    }
+    public RegionData GetAssignedRegionForSurvivor(Survivor survivor)
+    {
+        if(survivor == null)
+        {
+            Debug.LogWarning("Survivor is null.");
+            return null;
+        }
+
+        //Look up the region assigned to this survivor
+        if(survivorRegionMap.TryGetValue(survivor, out RegionData assignedRegion))
+        {
+            return assignedRegion;
+        }
+
+        Debug.LogWarning($"No region assigned to survivor {survivor.name}.");
+        return null;
     }
 }

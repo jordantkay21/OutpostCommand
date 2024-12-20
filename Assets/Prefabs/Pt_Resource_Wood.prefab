@@ -453,7 +453,7 @@ GameObject:
   - component: {fileID: 7384291957882467774}
   - component: {fileID: 3789942303025128082}
   m_Layer: 0
-  m_Name: Proto_Resource_Wood
+  m_Name: Pt_Resource_Wood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
