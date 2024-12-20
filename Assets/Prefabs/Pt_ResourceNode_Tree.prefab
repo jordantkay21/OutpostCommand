@@ -146,9 +146,10 @@ GameObject:
   - component: {fileID: 1588218585541771222}
   - component: {fileID: 3531028751479499134}
   - component: {fileID: 3606532885743844949}
+  - component: {fileID: -8781294410056702971}
   m_Layer: 0
   m_Name: Pt_ResourceNode_Tree
-  m_TagString: Undefined
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,6 +245,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8781294410056702971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651164250227861122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b63d421850f704690ea1b388890a98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minWoodDrops: 1
+  maxWoodDrops: 3
+  saplingDropChance: 0.25
+  minSaplingDrops: 1
+  maxSaplingDrops: 2
 --- !u!1 &1291792221497081588
 GameObject:
   m_ObjectHideFlags: 0

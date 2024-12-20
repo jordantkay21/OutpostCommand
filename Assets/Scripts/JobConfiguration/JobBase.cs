@@ -58,7 +58,7 @@ public class LumberjackJob : JobBase
             if (tile.IsOccupied && tile.spawnedPrefab.CompareTag("Tree"))
             {
                 tasks.Add(new MoveToTileTask(tile));
-                tasks.Add(new ChopTreeTask(tile.spawnedPrefab));
+                tasks.Add(new ChopTreeTask(tile.spawnedPrefab, tile));
             }
         }
 
