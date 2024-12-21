@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Tile
   - Chunk
+  - Tree
+  - Undefined
   layers:
   - Default
   - TransparentFX

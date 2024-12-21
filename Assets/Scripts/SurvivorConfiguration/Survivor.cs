@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +18,14 @@ public class Survivor : MonoBehaviour
     public Material originalMaterial;
     public float movementSpeed;
 
+    //Inventory to store collected resources
+    [ShowInInspector]
+    private Dictionary<ResourceType, int> inventory = new Dictionary<ResourceType, int>();
+
     private void Awake()
     {
         survivorRenderer = GetComponent<Renderer>();
+        inventory = new Dictionary<ResourceType, int>();
     }
 
     public void AssignJob(SurvivorJob job)
@@ -35,7 +41,6 @@ public class Survivor : MonoBehaviour
             survivorRenderer.material = newMaterial;
         }
     }
-
     public void MoveToTile(TileData targetTile, System.Action onArrival = null)
     {
         if (targetTile == null)
@@ -65,17 +70,42 @@ public class Survivor : MonoBehaviour
             onArrival?.Invoke();
         }));
     }
+    public void CollectResource(ResourceType type, int amount)
+    {
+        //Get the assigned region for the survivor
+        RegionData assignedRegion = SurvivorManager.Instance.GetAssignedRegionForSurvivor(this);
 
+        if(assignedRegion == null)
+        {
+            Debug.LogWarning($"NO assigned region for {name}. Cannot colelct resources.");
+            return;
+        }
 
+        //Remove the resource from the assigned region and add it to the survivor's inventory
+        if (assignedRegion.RemoveResource(type, amount))
+        {
+            if (inventory.ContainsKey(type))
+            {
+                inventory[type] += amount;
+            }
+            else
+            {
+                inventory[type] = amount;
+            }
+
+            Debug.Log($"{name} collected {amount} {type} from {assignedRegion.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"{assignedRegion.name} does not have enough {type}.");
+        }
+    }
     private bool IsTileRelevantToJob(TileData tile)
     {
         if (CurrentJob == SurvivorJob.Lumberjack && tile.spawnedPrefab.CompareTag("Tree")) return true;
         // Add additional job-specific conditions here
         return false;
     }
-
-
-
     private IEnumerator MoveToPosition(Vector3 destination, System.Action onReachDestination)
     {
         while (Vector3.Distance(transform.position, destination) > 0.1f)

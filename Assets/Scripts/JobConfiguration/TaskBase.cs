@@ -82,6 +82,14 @@ public class ChopTreeTask : TaskBase
 
             // Delegate resource spawning to ResourceManager
             ResourceManager.Instance.SpawnResources(tile, woodDrops, saplingDrops);
+
+            // Add resources to the region's Resource dictionary
+            RegionData region = tile.GetComponentInParent<RegionData>();
+            if (region!= null)
+            {
+                region.AddResource(ResourceType.Wood, woodDrops);
+                region.AddResource(ResourceType.Sapling, saplingDrops);
+            }
         }
 
         GameObject.Destroy(tree);

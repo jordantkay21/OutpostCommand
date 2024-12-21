@@ -1,5 +1,11 @@
 using UnityEngine;
 
+public enum ResourceType
+{
+    Wood,
+    Sapling
+}
+
 public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager Instance;
